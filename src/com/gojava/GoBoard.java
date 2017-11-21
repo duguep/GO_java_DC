@@ -1,4 +1,4 @@
-package sample;
+package com.gojava;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;

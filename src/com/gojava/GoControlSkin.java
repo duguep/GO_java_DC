@@ -1,4 +1,4 @@
-package sample;
+package com.gojava;
 
 import javafx.scene.control.SkinBase;
 
