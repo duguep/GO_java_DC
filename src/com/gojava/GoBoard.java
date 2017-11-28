@@ -156,8 +156,10 @@ public class GoBoard extends Pane
     }
 
     public void placePiece(final double x, final double y) {
-        int cx = (int) (x / cell_width);
-        int cy = (int) (y / cell_height);
+
+
+        int cx = (int) Math.round(x / cell_width);
+        int cy = (int) Math.round(y / cell_height);
 
         if (cx < 0) {
             cx = 0;
