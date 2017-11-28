@@ -155,7 +155,8 @@ public class GoBoard extends Pane
         }
     }
 
-    public void placePiece(final double x, final double y) {
+    public void placePiece(final double x, final double y)
+    {
 
 
         int cx = (int) Math.round(x / cell_width);
@@ -176,9 +177,24 @@ public class GoBoard extends Pane
         if (!in_play || render[cx][cy].getPiece() != 0)
             return;
 
+        if (!checkArround(current_player, cx, cy))
+
         placeAndReverse(cx, cy);
         swapPlayers();
 
+    }
+
+    public boolean checkArround(int player, int x, int y)
+    {
+//        boolean isotherPlayer = false;
+        if (x < 0 || x > 8 || y  < 0 || y > 8)
+            return true;
+        if (render[x -1][y].getPiece() == opposing &&
+                render[x][y - 1].getPiece() == opposing &&
+                render[x + 1][y].getPiece() == opposing &&
+                render[x][y + 1].getPiece() == opposing)
+            return true;
+        return false;
     }
 
     // private method for placing a piece and reversing pieces
