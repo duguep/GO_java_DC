@@ -55,11 +55,13 @@ public class GoBoard extends Pane
 
     public GoBoard()
     {
-        horizontal = new Line[9];
-        vertical = new Line[9];
-        horizontal_t = new Translate[9];
-        vertical_t = new Translate[9];
+        horizontal = new Line[8];
+        vertical = new Line[8];
+        horizontal_t = new Translate[8];
+        vertical_t = new Translate[8];
+        render = new GoPiece[7][7];
         initialiseLinesBackground();
+        initialiseRender();
     }
 
     // private method that will initialise the background and the lines
@@ -68,7 +70,7 @@ public class GoBoard extends Pane
         background.setFill(Color.valueOf(BACKGROUND_PAINT));
         getChildren().add(background);
 
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < 8; ++i) {
             horizontal[i] = new Line();
             horizontal[i].setStrokeWidth(2);
             horizontal[i].setStroke(Color.valueOf(STROKE_COLOR));
@@ -104,8 +106,8 @@ public class GoBoard extends Pane
         background.setWidth(width);
         background.setHeight(height);
 
-        cell_width = min / 8;
-        cell_height = min / 8;
+        cell_width = min / 7;
+        cell_height = min / 7;
 
         offset_h = (width - min) / 2;
         offset_v = (height - min) / 2;
@@ -118,36 +120,53 @@ public class GoBoard extends Pane
     // private method for resizing and relocating all the lines
 
     private void linesResizeRelocate(double width, double height) {
-        for (int i = 0; i < 9; ++i) {
+        for (int i = 0; i < 8; ++i) {
             horizontal_t[i].setX(offset_h);
             horizontal_t[i].setY(offset_v + i * cell_height);
-            horizontal[i].setEndX(8 * cell_width);
+            horizontal[i].setEndX(7 * cell_width);
 
             vertical_t[i].setY(offset_v);
             vertical_t[i].setX(offset_h + i * cell_width);
-            vertical[i].setEndY(8 * cell_height);
+            vertical[i].setEndY(7 * cell_height);
         }
     }
 
     // private method for resizing and relocating all the pieces
 
     private void pieceResizeRelocate() {
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                //render[i][j].relocate(offset_h + i * cell_width + cell_width / 8, offset_v + j * cell_height + cell_height / 8);
-                //render[i][j].resize(cell_width, cell_height);
+        for (int i = 0; i < 7; ++i) {
+            for (int j = 0; j < 7; ++j) {
+                render[i][j].relocate(offset_h + i * cell_width + cell_width / 8, offset_v + j * cell_height + cell_height / 8);
+                render[i][j].resize(cell_width, cell_height);
             }
         }
     }
 
     // private method that will initialise everything in the render array
     private void initialiseRender() {
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
+        for (int i = 0; i < 7; ++i) {
+            for (int j = 0; j < 7; ++j) {
                 render[i][j] = new GoPiece(0);
                 getChildren().add(render[i][j]);
             }
         }
+    }
+
+    public void placePiece(final double x, final double y) {
+        int cx = (int) (x / cell_width);
+        int cy = (int) (y / cell_height);
+
+        if (!in_play || render[cx][cy].getPiece() != 0)
+            return;
+
+    }
+
+    public double getOffset_h() {
+        return offset_h;
+    }
+
+    public double getOffset_v() {
+        return offset_v;
     }
 
 }
