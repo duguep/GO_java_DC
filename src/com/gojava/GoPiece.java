@@ -36,7 +36,7 @@ public class GoPiece extends Group
     {
         super.resize(width, height);
         piece.setCenterX(width / 2); piece.setCenterY(height / 2);
-        piece.setRadiusX(3 * width / 8); piece.setRadiusY(3 * height / 8);
+        piece.setRadiusX(width / 4); piece.setRadiusY(height / 4);
     }
 
     // overridden version of the relocate method to position the piece correctly
@@ -67,6 +67,16 @@ public class GoPiece extends Group
     public  int getPiece()
     {
         return player;
+    }
+
+    // method that will set the piece type
+    public void setPiece(final int type) {
+        getChildren().remove(piece);
+        player = type;
+        piece.setFill(Color.valueOf((player == 1) ? "#f0f0f0" : "#222222"));
+        if (player != 0) {
+            getChildren().add(piece);
+        }
     }
 
     private int player;

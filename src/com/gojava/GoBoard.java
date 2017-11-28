@@ -55,11 +55,14 @@ public class GoBoard extends Pane
 
     public GoBoard()
     {
-        horizontal = new Line[8];
-        vertical = new Line[8];
-        horizontal_t = new Translate[8];
-        vertical_t = new Translate[8];
+        horizontal = new Line[7];
+        vertical = new Line[7];
+        horizontal_t = new Translate[7];
+        vertical_t = new Translate[7];
         render = new GoPiece[7][7];
+        in_play = true;
+        current_player = 2;
+        opposing = 1;
         initialiseLinesBackground();
         initialiseRender();
     }
@@ -70,7 +73,7 @@ public class GoBoard extends Pane
         background.setFill(Color.valueOf(BACKGROUND_PAINT));
         getChildren().add(background);
 
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < 7; ++i) {
             horizontal[i] = new Line();
             horizontal[i].setStrokeWidth(2);
             horizontal[i].setStroke(Color.valueOf(STROKE_COLOR));
@@ -101,13 +104,13 @@ public class GoBoard extends Pane
     public void resize(double width, double height) {
         super.resize(width, height);
 
-        min = 3 * Math.min(width, height) / 4;
+        min = 2 * Math.min(width, height) / 3;
 
         background.setWidth(width);
         background.setHeight(height);
 
-        cell_width = min / 7;
-        cell_height = min / 7;
+        cell_width = min / 6;
+        cell_height = min / 6;
 
         offset_h = (width - min) / 2;
         offset_v = (height - min) / 2;
@@ -120,14 +123,14 @@ public class GoBoard extends Pane
     // private method for resizing and relocating all the lines
 
     private void linesResizeRelocate(double width, double height) {
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < 7; ++i) {
             horizontal_t[i].setX(offset_h);
             horizontal_t[i].setY(offset_v + i * cell_height);
-            horizontal[i].setEndX(7 * cell_width);
+            horizontal[i].setEndX(6 * cell_width);
 
             vertical_t[i].setY(offset_v);
             vertical_t[i].setX(offset_h + i * cell_width);
-            vertical[i].setEndY(7 * cell_height);
+            vertical[i].setEndY(6 * cell_height);
         }
     }
 
@@ -136,7 +139,7 @@ public class GoBoard extends Pane
     private void pieceResizeRelocate() {
         for (int i = 0; i < 7; ++i) {
             for (int j = 0; j < 7; ++j) {
-                render[i][j].relocate(offset_h + i * cell_width + cell_width / 8, offset_v + j * cell_height + cell_height / 8);
+                render[i][j].relocate(offset_h + i * cell_width - cell_width / 4, offset_v + j * cell_height - cell_height / 4);
                 render[i][j].resize(cell_width, cell_height);
             }
         }
@@ -156,9 +159,30 @@ public class GoBoard extends Pane
         int cx = (int) (x / cell_width);
         int cy = (int) (y / cell_height);
 
+        if (cx < 0) {
+            cx = 0;
+        } else if (cx > 6) {
+            cx = 6;
+        }
+
+        if (cy < 0) {
+            cy = 0;
+        } else if (cy > 6) {
+            cy = 6;
+        }
+
         if (!in_play || render[cx][cy].getPiece() != 0)
             return;
 
+        placeAndReverse(cx, cy);
+        swapPlayers();
+
+    }
+
+    // private method for placing a piece and reversing pieces
+
+    private void placeAndReverse(final int x, final int y) {
+        render[x][y].setPiece(current_player);
     }
 
     public double getOffset_h() {
@@ -167,6 +191,11 @@ public class GoBoard extends Pane
 
     public double getOffset_v() {
         return offset_v;
+    }
+
+    private void swapPlayers() {
+        current_player =  (current_player == 1) ? 2 : 1;
+        opposing = (opposing == 1) ? 2 : 1;
     }
 
 }
