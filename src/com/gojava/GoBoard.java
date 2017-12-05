@@ -8,6 +8,7 @@ import javafx.scene.transform.Translate;
 
 public class GoBoard extends Pane
 {
+    private static final int GRID_SIZE = 7;
 
     private static final String BACKGROUND_PAINT = "#454545";
     private static final String STROKE_COLOR = "#ffffff";
@@ -55,11 +56,11 @@ public class GoBoard extends Pane
 
     public GoBoard()
     {
-        horizontal = new Line[7];
-        vertical = new Line[7];
-        horizontal_t = new Translate[7];
-        vertical_t = new Translate[7];
-        render = new GoPiece[7][7];
+        horizontal = new Line[GRID_SIZE];
+        vertical = new Line[GRID_SIZE];
+        horizontal_t = new Translate[GRID_SIZE];
+        vertical_t = new Translate[GRID_SIZE];
+        render = new GoPiece[GRID_SIZE][GRID_SIZE];
         in_play = true;
         current_player = 2;
         opposing = 1;
@@ -73,7 +74,7 @@ public class GoBoard extends Pane
         background.setFill(Color.valueOf(BACKGROUND_PAINT));
         getChildren().add(background);
 
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < GRID_SIZE; ++i) {
             horizontal[i] = new Line();
             horizontal[i].setStrokeWidth(2);
             horizontal[i].setStroke(Color.valueOf(STROKE_COLOR));
@@ -123,7 +124,7 @@ public class GoBoard extends Pane
     // private method for resizing and relocating all the lines
 
     private void linesResizeRelocate(double width, double height) {
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < GRID_SIZE; ++i) {
             horizontal_t[i].setX(offset_h);
             horizontal_t[i].setY(offset_v + i * cell_height);
             horizontal[i].setEndX(6 * cell_width);
@@ -137,7 +138,7 @@ public class GoBoard extends Pane
     // private method for resizing and relocating all the pieces
 
     private void pieceResizeRelocate() {
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < GRID_SIZE; ++i) {
             for (int j = 0; j < 7; ++j) {
                 render[i][j].relocate(offset_h + i * cell_width - cell_width / 4, offset_v + j * cell_height - cell_height / 4);
                 render[i][j].resize(cell_width, cell_height);
@@ -147,7 +148,7 @@ public class GoBoard extends Pane
 
     // private method that will initialise everything in the render array
     private void initialiseRender() {
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < GRID_SIZE; ++i) {
             for (int j = 0; j < 7; ++j) {
                 render[i][j] = new GoPiece(0);
                 getChildren().add(render[i][j]);
@@ -156,8 +157,6 @@ public class GoBoard extends Pane
     }
 
     public void placePiece(final double x, final double y) {
-
-
         int cx = (int) Math.round(x / cell_width);
         int cy = (int) Math.round(y / cell_height);
 
