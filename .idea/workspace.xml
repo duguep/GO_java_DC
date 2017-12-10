@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/GO/com/gojava/GoBoard.class" afterPath="$PROJECT_DIR$/out/production/GO/com/gojava/GoBoard.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/GO/com/gojava/GoControl$1.class" afterPath="$PROJECT_DIR$/out/production/GO/com/gojava/GoControl$1.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/GO/com/gojava/GoControl.class" afterPath="$PROJECT_DIR$/out/production/GO/com/gojava/GoControl.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/GO/com/gojava/GoPiece.class" afterPath="$PROJECT_DIR$/out/production/GO/com/gojava/GoPiece.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/gojava/GoBoard.java" afterPath="$PROJECT_DIR$/src/com/gojava/GoBoard.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/gojava/GoControl.java" afterPath="$PROJECT_DIR$/src/com/gojava/GoControl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/gojava/GoPiece.java" afterPath="$PROJECT_DIR$/src/com/gojava/GoPiece.java" />
-    </list>
+    <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="" />
     <ignored path="JavaFxApplication.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -82,8 +73,8 @@
       <file leaf-file-name="GoBoard.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/gojava/GoBoard.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="406">
-              <caret line="161" column="71" lean-forward="false" selection-start-line="161" selection-start-column="71" selection-end-line="161" selection-end-column="71" />
+            <state relative-caret-position="18">
+              <caret line="105" column="0" lean-forward="false" selection-start-line="105" selection-start-column="0" selection-end-line="105" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#6135#6136#0" expanded="true" />
@@ -548,7 +539,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9772000" />
+    <option name="totallyTimeSpent" value="10419000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
@@ -1103,8 +1094,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/gojava/GoBoard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="161" column="71" lean-forward="false" selection-start-line="161" selection-start-column="71" selection-end-line="161" selection-end-column="71" />
+        <state relative-caret-position="18">
+          <caret line="105" column="0" lean-forward="false" selection-start-line="105" selection-start-column="0" selection-end-line="105" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#6135#6136#0" expanded="true" />
