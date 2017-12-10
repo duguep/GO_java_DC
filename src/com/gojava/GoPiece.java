@@ -2,6 +2,9 @@ package com.gojava;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.transform.Translate;
 
@@ -36,7 +39,7 @@ public class GoPiece extends Group
     {
         super.resize(width, height);
         piece.setCenterX(width / 2); piece.setCenterY(height / 2);
-        piece.setRadiusX(width / 4); piece.setRadiusY(height / 4);
+        piece.setRadiusX(3 * width / 8); piece.setRadiusY(3 * height / 8);
     }
 
     // overridden version of the relocate method to position the piece correctly
@@ -73,7 +76,7 @@ public class GoPiece extends Group
     public void setPiece(final int type) {
         getChildren().remove(piece);
         player = type;
-        piece.setFill(Color.valueOf((player == 1) ? "#f0f0f0" : "#222222"));
+        piece.setFill((player == 1) ? GAME_WHITE_COLOR : GAME_BLACK_COLOR);
         if (player != 0) {
             getChildren().add(piece);
         }
@@ -82,4 +85,7 @@ public class GoPiece extends Group
     private int player;
     private Ellipse piece;
     private Translate t;
+    private static final RadialGradient GAME_WHITE_COLOR = new RadialGradient(0.5, 0.5, 0, 0, 1, true, CycleMethod.REFLECT, new Stop(0, Color.WHITE), new Stop(1, Color.GREY));
+    private static final RadialGradient GAME_BLACK_COLOR = new RadialGradient(0.5, 0.5, 0, 0, 1, true, CycleMethod.REFLECT, new Stop(0, Color.valueOf("454545")), new Stop(1, Color.BLACK));
+
 }
