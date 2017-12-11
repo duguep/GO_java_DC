@@ -223,7 +223,7 @@ public class GoBoard extends Pane
     }
 
     public boolean allowedMove(int x, int y){
-        if(getPiece(x, y) != 0 || this.countLiberties(x, y) <= 0)
+        if(getPiece(x, y) != 0 || this.countLiberties(x, y) == 0)
             return (false);
         return (true);
     }
@@ -231,13 +231,13 @@ public class GoBoard extends Pane
     private int countLiberties(final int x, final int y) {
         int liberties = 0;
 
-        if (x > 0 && getPiece(x - 1, y) == 0)
+        if (x > 0 && (getPiece(x - 1, y) == 0 || getPiece(x - 1, y) == current_player))
             ++liberties;
-        if (x < 6 && getPiece(x + 1, y) == 0)
+        if (x < 6 && (getPiece(x + 1, y) == 0 || getPiece(x + 1, y) == current_player))
             ++liberties;
-        if (y > 0 && getPiece(x, y - 1) == 0)
+        if (y > 0 && (getPiece(x, y - 1) == 0 || getPiece(x, y - 1) == current_player))
             ++liberties;
-        if (y < 6 && getPiece(x, y + 1) == 0)
+        if (y < 6 && (getPiece(x, y + 1) == 0 || getPiece(x,y + 1) == current_player))
             ++liberties;
 
         return liberties;
