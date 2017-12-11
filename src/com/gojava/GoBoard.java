@@ -4,6 +4,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
 
 public class GoBoard extends Pane
@@ -54,6 +57,10 @@ public class GoBoard extends Pane
     private double offset_h;
     private double offset_v;
 
+    // text of cell
+    Text t_h[];
+    Text t_v[];
+
     public GoBoard()
     {
         horizontal = new Line[GRID_SIZE];
@@ -64,6 +71,8 @@ public class GoBoard extends Pane
         in_play = true;
         current_player = 2;
         opposing = 1;
+        t_h =  new Text[GRID_SIZE];
+        t_v =  new Text[GRID_SIZE];
         initialiseLinesBackground();
         initialiseRender();
     }
@@ -75,6 +84,15 @@ public class GoBoard extends Pane
         getChildren().add(background);
 
         for (int i = 0; i < GRID_SIZE; ++i) {
+            t_h[i] = new Text(50, 50, String.valueOf((char)(65 + i)));
+            t_h[i].setFont(new Font(40));
+            t_h[i].setTextAlignment(TextAlignment.CENTER);
+            getChildren().add(t_h[i]);
+            t_v[i] = new Text(50, 50, String.valueOf((char)((48 + t_v.length) - i)));
+            t_v[i].setFont(new Font(40));
+            t_v[i].setTextAlignment(TextAlignment.CENTER);
+            getChildren().add(t_v[i]);
+
             horizontal[i] = new Line();
             horizontal[i].setStrokeWidth(2);
             horizontal[i].setStroke(Color.valueOf(STROKE_COLOR));
@@ -144,6 +162,11 @@ public class GoBoard extends Pane
 
     private void linesResizeRelocate(double width, double height) {
         for (int i = 0; i < GRID_SIZE; ++i) {
+            t_h[i].setX((offset_h + i * cell_height) - 10);
+            t_h[i].setY(offset_v - 40);
+            t_v[i].setX(offset_h - 60);
+            t_v[i].setY((offset_v + i * cell_width) + 15);
+
             horizontal_t[i].setX(offset_h);
             horizontal_t[i].setY(offset_v + i * cell_height);
             horizontal[i].setEndX(6 * cell_width);
