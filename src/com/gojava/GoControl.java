@@ -16,6 +16,8 @@ public class GoControl extends Control
         go_board = new GoBoard();
         getChildren().add(go_board);
 
+
+
         setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -34,5 +36,8 @@ public class GoControl extends Control
         });
 
     }
-
+    GoBoard getGo_board()
+    {
+        return go_board;
+    }
 }
