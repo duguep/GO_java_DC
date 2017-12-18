@@ -1,5 +1,10 @@
 package com.gojava;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -8,6 +13,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
+import javafx.util.Duration;
+
 
 public class GoBoard extends Pane
 {
@@ -61,6 +68,14 @@ public class GoBoard extends Pane
     Text t_h[];
     Text t_v[];
 
+    //round timer
+    private static final Integer STARTTIME = 120;
+    private Timeline timeline;
+    private Label timerLabel;
+    private Integer timeSeconds = STARTTIME;
+
+    ScoreBoard bla;
+
     public GoBoard()
     {
         horizontal = new Line[GRID_SIZE];
@@ -75,6 +90,48 @@ public class GoBoard extends Pane
         t_v =  new Text[GRID_SIZE];
         initialiseLinesBackground();
         initialiseRender();
+        initialiseTimer();
+        System.out.println("scoreboard");
+        bla = new ScoreBoard(this);
+        getChildren().add(bla);
+    }
+
+    private void initialiseTimer()
+    {
+        timeline = new Timeline();
+        timerLabel = new Label();
+        timeSeconds = STARTTIME;
+        timerLabel.setText(timeSeconds.toString());
+        timerLabel.setTextFill(Color.WHITE);
+        timerLabel.setStyle("-fx-font-size: 4em;");
+        if (timeline != null)
+            timeline.stop();
+        timeSeconds = STARTTIME;
+        timerLabel.setText(timeSeconds.toString());
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                timeSeconds--;
+                Integer min = (timeSeconds / 60) % 60;
+                if (timeSeconds > 60)
+                    timerLabel.setText(min.toString() + "." + timeSeconds % 60);
+                else
+                    timerLabel.setText(timeSeconds.toString());
+                if(timeSeconds <= 0)
+                {
+                    swapPlayers();
+                    timerLabel.setTextFill(Color.WHITE);
+                }
+                else if (timeSeconds <= 60 && timeSeconds > 15)
+                    timerLabel.setTextFill(Color.YELLOW);
+                else if (timeSeconds <= 15)
+                    timerLabel.setTextFill(Color.RED);
+
+            }
+        }));
+    timeline.playFromStart();
+    getChildren().add(timerLabel);
     }
 
     // private method that will initialise the background and the lines
@@ -153,9 +210,13 @@ public class GoBoard extends Pane
         offset_h = (width - min) / 2;
         offset_v = (height - min) / 2;
 
+        timerLabel.resize(50, 50);
+        timerLabel.relocate(width/2 - timerLabel.getWidth(), 0);
+
         linesResizeRelocate(width, height);
         pieceResizeRelocate();
-
+        bla.relocate(width, height);
+        bla.resize(width, height);
     }
 
     // private method for resizing and relocating all the lines
@@ -216,7 +277,6 @@ public class GoBoard extends Pane
 
         if (!in_play || !allowedMove(cx, cy))
             return;
-
         placeAndReverse(cx, cy);
         swapPlayers();
 
@@ -228,7 +288,8 @@ public class GoBoard extends Pane
         return (true);
     }
 
-    private int countLiberties(final int x, final int y) {
+    private int countLiberties(final int x, final int y)
+    {
         int liberties = 0;
 
         if (x > 0 && (getPiece(x - 1, y) == 0 || getPiece(x - 1, y) == current_player))
@@ -264,6 +325,10 @@ public class GoBoard extends Pane
     private void swapPlayers() {
         current_player =  (current_player == 1) ? 2 : 1;
         opposing = (opposing == 1) ? 2 : 1;
+        timeSeconds = STARTTIME;
     }
-
+    int getCurrent_player()
+    {
+        return current_player;
+    }
 }

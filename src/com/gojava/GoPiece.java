@@ -16,6 +16,8 @@ public class GoPiece extends Group
         t = new Translate();
         piece = new Ellipse();
         piece.getTransforms().add(t);
+        piece.setFill((player == 1) ? GAME_WHITE_COLOR : GAME_BLACK_COLOR);
+/*
         if (this.player == 1)
         {
             piece.setStroke(Color.WHITE);
@@ -28,6 +30,7 @@ public class GoPiece extends Group
         {
             piece.setStroke(new Color(0, 0, 0, 0));
         }
+*/
         if (player != 0)
             getChildren().add(piece);
 
