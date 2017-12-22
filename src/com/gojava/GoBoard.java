@@ -1,5 +1,10 @@
 package com.gojava;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -8,6 +13,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Translate;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class GoBoard extends Pane
 {
@@ -61,6 +71,20 @@ public class GoBoard extends Pane
     Text t_h[];
     Text t_v[];
 
+    //round timer
+    private static final Integer STARTTIME = 120;
+    private Timeline timeline;
+    private Label timerLabel;
+    private Integer timeSeconds = STARTTIME;
+
+    ScoreBoard bla;
+
+    // Variable to check if the case has been captured
+    private boolean hasCaptured;
+
+    private List<GoPiece> pieceChunk;
+    private boolean chunkHasLiberty;
+
     public GoBoard()
     {
         horizontal = new Line[GRID_SIZE];
@@ -75,6 +99,48 @@ public class GoBoard extends Pane
         t_v =  new Text[GRID_SIZE];
         initialiseLinesBackground();
         initialiseRender();
+        initialiseTimer();
+        System.out.println("scoreboard");
+        bla = new ScoreBoard(this);
+        getChildren().add(bla);
+    }
+
+    private void initialiseTimer()
+    {
+        timeline = new Timeline();
+        timerLabel = new Label();
+        timeSeconds = STARTTIME;
+        timerLabel.setText(timeSeconds.toString());
+        timerLabel.setTextFill(Color.WHITE);
+        timerLabel.setStyle("-fx-font-size: 4em;");
+        if (timeline != null)
+            timeline.stop();
+        timeSeconds = STARTTIME;
+        timerLabel.setText(timeSeconds.toString());
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                timeSeconds--;
+                Integer min = (timeSeconds / 60) % 60;
+                if (timeSeconds > 60)
+                    timerLabel.setText(min.toString() + "." + timeSeconds % 60);
+                else
+                    timerLabel.setText(timeSeconds.toString());
+                if(timeSeconds <= 0)
+                {
+                    swapPlayers();
+                    timerLabel.setTextFill(Color.WHITE);
+                }
+                else if (timeSeconds <= 60 && timeSeconds > 15)
+                    timerLabel.setTextFill(Color.YELLOW);
+                else if (timeSeconds <= 15)
+                    timerLabel.setTextFill(Color.RED);
+
+            }
+        }));
+    timeline.playFromStart();
+    getChildren().add(timerLabel);
     }
 
     // private method that will initialise the background and the lines
@@ -153,9 +219,13 @@ public class GoBoard extends Pane
         offset_h = (width - min) / 2;
         offset_v = (height - min) / 2;
 
+        timerLabel.resize(50, 50);
+        timerLabel.relocate(width/2 - timerLabel.getWidth(), 0);
+
         linesResizeRelocate(width, height);
         pieceResizeRelocate();
-
+        bla.relocate(width, height);
+        bla.resize(width, height);
     }
 
     // private method for resizing and relocating all the lines
@@ -193,6 +263,8 @@ public class GoBoard extends Pane
         for (int i = 0; i < GRID_SIZE; ++i) {
             for (int j = 0; j < 7; ++j) {
                 render[i][j] = new GoPiece(0);
+                render[i][j].setX(i);
+                render[i][j].setY(j);
                 getChildren().add(render[i][j]);
             }
         }
@@ -214,21 +286,125 @@ public class GoBoard extends Pane
             cy = 6;
         }
 
-        if (!in_play || !allowedMove(cx, cy))
+        if (!in_play)
             return;
 
-        placeAndReverse(cx, cy);
+        if (getPiece(cx, cy) != 0)
+            return;
+
+        System.out.println("liberties: " + countLiberties(cx, cy));
+
+        if (!isValidMove(cx, cy))
+            return;
+
+        render[cx][cy].setPiece(current_player);
+        hasCaptured = false;
+        checkCapture(cx + 1, cy, opposing);
+        checkCapture(cx - 1, cy, opposing);
+        checkCapture(cx, cy + 1, opposing);
+        checkCapture(cx, cy - 1, opposing);
         swapPlayers();
+
+        /*
+            placeAndReverse(cx, cy);
+            swapPlayers();
+        */
 
     }
 
-    public boolean allowedMove(int x, int y){
-        if(getPiece(x, y) != 0 || this.countLiberties(x, y) == 0)
+    public boolean isValidMove(int x, int y) {
+        if (render[x][y].getPiece() != 0)
             return (false);
+        if (countLiberties(x, y) == 0) {
+            hasCaptured = false;
+            render[x][y].setPiece(current_player);
+            checkCapture(x + 1, y, opposing);
+            checkCapture(x - 1, y, opposing);
+            checkCapture(x, y + 1, opposing);
+            checkCapture(x, y - 1, opposing);
+            render[x][y].setPiece(0);
+            if (hasCaptured)
+                return (true);
+
+            render[x][y].setPiece(current_player);
+            if (!checkChunk(x, y, current_player))
+            {
+                render[x][y].setPiece(0);
+                return (false);
+            }
+
+            int[] surroundPieces = new int[4];
+            surroundPieces[0] = getPiece(x + 1, y);
+            surroundPieces[1] = getPiece(x - 1, y);
+            surroundPieces[2] = getPiece(x, y + 1);
+            surroundPieces[3] = getPiece(x, y - 1);
+            if ((surroundPieces[0] == current_player || surroundPieces[0] == -1)
+                    && (surroundPieces[1] == current_player || surroundPieces[1] == -1)
+                    && (surroundPieces[2] == current_player || surroundPieces[2] == -1)
+                    && (surroundPieces[3] == current_player || surroundPieces[3] == -1))
+                return (true);
+            return (false);
+        }
         return (true);
     }
 
-    private int countLiberties(final int x, final int y) {
+    private void checkCapture(final int x, final int y, final int player) {
+        if (!checkChunk(x, y, player)) {
+            for (GoPiece piece : pieceChunk) {
+                hasCaptured = true;
+                piece.setPiece(0);
+            }
+        }
+    }
+
+    private boolean checkChunk(final int x, final int y, final int player) {
+        pieceChunk = new ArrayList<GoPiece>();
+        chunkHasLiberty = false;
+
+        if (getPiece(x, y) == player) {
+            pieceChunk.add(render[x][y]);
+        }
+        for (int i = 0; i < pieceChunk.size(); ++i) {
+            checkPiece(pieceChunk.get(i).getX(), pieceChunk.get(i).getY(), player);
+        }
+        return (chunkHasLiberty);
+    }
+
+    private void checkPiece(final int x, final int y, final int player) {
+        if (!validCoords(x, y))
+            return;
+
+        if (checkPosition(x + 1, y, player))
+            chunkHasLiberty = true;
+        if (checkPosition(x - 1, y, player))
+            chunkHasLiberty = true;
+        if (checkPosition(x, y + 1, player))
+            chunkHasLiberty = true;
+        if (checkPosition(x, y - 1, player))
+            chunkHasLiberty = true;
+    }
+
+    private boolean validCoords(final int x, final int y) {
+        if ((x >= 0 && x < GRID_SIZE + 1) && (y >= 0 && y < GRID_SIZE + 1)) {
+            return (true);
+        }
+        return (false);
+    }
+
+    private boolean checkPosition(final int x, final int y, final int player) {
+        if (!validCoords(x, y))
+            return (false);
+        int pieceType = getPiece(x, y);
+        GoPiece piece = render[x][y];
+        if (pieceType == 0)
+            return (true);
+        if (pieceType == player && !pieceChunk.contains(piece))
+            pieceChunk.add(piece);
+        return (false);
+    }
+
+    private int countLiberties(final int x, final int y)
+    {
         int liberties = 0;
 
         if (x > 0 && (getPiece(x - 1, y) == 0 || getPiece(x - 1, y) == current_player))
@@ -264,6 +440,10 @@ public class GoBoard extends Pane
     private void swapPlayers() {
         current_player =  (current_player == 1) ? 2 : 1;
         opposing = (opposing == 1) ? 2 : 1;
+        timeSeconds = STARTTIME;
     }
-
+    int getCurrent_player()
+    {
+        return current_player;
+    }
 }

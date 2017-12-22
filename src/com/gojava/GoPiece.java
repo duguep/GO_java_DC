@@ -16,6 +16,8 @@ public class GoPiece extends Group
         t = new Translate();
         piece = new Ellipse();
         piece.getTransforms().add(t);
+        piece.setFill((player == 1) ? GAME_WHITE_COLOR : GAME_BLACK_COLOR);
+/*
         if (this.player == 1)
         {
             piece.setStroke(Color.WHITE);
@@ -28,6 +30,7 @@ public class GoPiece extends Group
         {
             piece.setStroke(new Color(0, 0, 0, 0));
         }
+*/
         if (player != 0)
             getChildren().add(piece);
 
@@ -82,10 +85,28 @@ public class GoPiece extends Group
         }
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     private int player;
     private Ellipse piece;
     private Translate t;
     private static final RadialGradient GAME_WHITE_COLOR = new RadialGradient(0.5, 0.5, 0, 0, 1, true, CycleMethod.REFLECT, new Stop(0, Color.WHITE), new Stop(1, Color.GREY));
     private static final RadialGradient GAME_BLACK_COLOR = new RadialGradient(0.5, 0.5, 0, 0, 1, true, CycleMethod.REFLECT, new Stop(0, Color.valueOf("454545")), new Stop(1, Color.BLACK));
+    private int x;
+    private int y;
 
 }
