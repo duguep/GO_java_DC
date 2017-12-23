@@ -71,11 +71,6 @@ public class GoBoard extends Pane
     Text t_h[];
     Text t_v[];
 
-    //round timer
-    private static final Integer STARTTIME = 120;
-    private Timeline timeline;
-    private Label timerLabel;
-    private Integer timeSeconds = STARTTIME;
 
     ScoreBoard bla;
 
@@ -99,49 +94,12 @@ public class GoBoard extends Pane
         t_v =  new Text[GRID_SIZE];
         initialiseLinesBackground();
         initialiseRender();
-        initialiseTimer();
         System.out.println("scoreboard");
         bla = new ScoreBoard(this);
         getChildren().add(bla);
+        bla.board = this;
     }
 
-    private void initialiseTimer()
-    {
-        timeline = new Timeline();
-        timerLabel = new Label();
-        timeSeconds = STARTTIME;
-        timerLabel.setText(timeSeconds.toString());
-        timerLabel.setTextFill(Color.WHITE);
-        timerLabel.setStyle("-fx-font-size: 4em;");
-        if (timeline != null)
-            timeline.stop();
-        timeSeconds = STARTTIME;
-        timerLabel.setText(timeSeconds.toString());
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                timeSeconds--;
-                Integer min = (timeSeconds / 60) % 60;
-                if (timeSeconds > 60)
-                    timerLabel.setText(min.toString() + "." + timeSeconds % 60);
-                else
-                    timerLabel.setText(timeSeconds.toString());
-                if(timeSeconds <= 0)
-                {
-                    swapPlayers();
-                    timerLabel.setTextFill(Color.WHITE);
-                }
-                else if (timeSeconds <= 60 && timeSeconds > 15)
-                    timerLabel.setTextFill(Color.YELLOW);
-                else if (timeSeconds <= 15)
-                    timerLabel.setTextFill(Color.RED);
-
-            }
-        }));
-    timeline.playFromStart();
-    getChildren().add(timerLabel);
-    }
 
     // private method that will initialise the background and the lines
     private void initialiseLinesBackground() {
@@ -190,8 +148,9 @@ public class GoBoard extends Pane
         in_play = true;
         current_player = 2;
         opposing = 1;
-        player1_score = 2;
-        player2_score = 2;
+        player1_score = 0;
+        player2_score = 0;
+        bla.changeScore(player2_score, player1_score);
     }
 
     // private method that will reset the renders
@@ -219,11 +178,20 @@ public class GoBoard extends Pane
         offset_h = (width - min) / 2;
         offset_v = (height - min) / 2;
 
-        timerLabel.resize(50, 50);
-        timerLabel.relocate(width/2 - timerLabel.getWidth(), 0);
 
         linesResizeRelocate(width, height);
         pieceResizeRelocate();
+
+        for (Text t:t_h)
+        {
+            t.setFont(new Font(cell_width));
+        }
+
+        for(Text t:t_v)
+        {
+            t.setFont(new Font(cell_height));
+        }
+
         bla.relocate(width, height);
         bla.resize(width, height);
     }
@@ -419,6 +387,23 @@ public class GoBoard extends Pane
         return liberties;
     }
 
+    void updateScore()
+    {
+        player1_score=0;
+        player2_score=0;
+        for (int i = 0; i <GRID_SIZE;i++)
+        {
+            for (int j = 0;j< GRID_SIZE;j++)
+            {
+                if (getPiece(i, j) == 2)
+                    player2_score++;
+                else if (getPiece(i, j) == 1)
+                    player1_score++;
+            }
+        }
+        bla.changeScore(player2_score, player1_score);
+    }
+
     private int getPiece(int x, int y) {
         return render[x][y].getPiece();
     }
@@ -437,10 +422,11 @@ public class GoBoard extends Pane
         return offset_v;
     }
 
-    private void swapPlayers() {
+    public void swapPlayers() {
         current_player =  (current_player == 1) ? 2 : 1;
         opposing = (opposing == 1) ? 2 : 1;
-        timeSeconds = STARTTIME;
+        updateScore();
+        bla.resetTime();
     }
     int getCurrent_player()
     {
